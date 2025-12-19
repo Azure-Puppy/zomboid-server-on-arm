@@ -39,14 +39,14 @@ curl -sqL "https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.g
 ./steamcmd.sh +quit > /dev/null
 
 # Set up and download zomboid server
-sudo mkdir -p /opt/zomboid-server/
-sudo chown -R $USER:$USER /opt/zomboid-server/
-./steamcmd.sh +@sSteamCmdForcePlatformType linux +login anonymous +force_install_dir /opt/zomboid-server/ +app_update 380870 validate -beta unstable +quit > /dev/null
+sudo mkdir -p /home/zomboid-server/
+sudo chown -R $USER:$USER /home/zomboid-server/
+./steamcmd.sh +@sSteamCmdForcePlatformType linux +force_install_dir /home/zomboid-server/ +login anonymous +app_update 380870 validate -beta 42.13.1 +quit > /dev/null
 
 read -p "Please start the server manually and set the password. Press Enter when that's done..."
 # Create symlinks for the files on the home of the user so that we can access it all from our server folder
-find ~ -type f -mmin -60 -exec ln -s {} /opt/zomboid-server/ \;
-find ~ -type d -mmin -60 -exec ln -s {} /opt/zomboid-server/ \;
+find ~ -type f -mmin -60 -exec ln -s {} /home/zomboid-server/ \;
+find ~ -type d -mmin -60 -exec ln -s {} /home/zomboid-server/ \;
 
 # Set up zomboid as a systemd service
 sudo tee /etc/systemd/system/zomboid-server.service > /dev/null <<EOL
@@ -56,8 +56,8 @@ After=network.target
 
 [Service]
 User=$(whoami)
-WorkingDirectory=/opt/zomboid-server
-ExecStart=/opt/zomboid-server/start-server.sh
+WorkingDirectory=/home/zomboid-server
+ExecStart=/home/zomboid-server/start-server.sh
 Restart=always
 
 [Install]
